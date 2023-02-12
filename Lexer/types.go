@@ -19,6 +19,7 @@ const (
 	TOKEN_COMMENT
 	TOKEN_STRING
 	TOKEN_TAB
+	TOKEN_END
 )
 
 // For Token position [inMain, col]

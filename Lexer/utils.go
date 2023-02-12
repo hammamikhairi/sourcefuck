@@ -24,6 +24,8 @@ func GetTokenName(tk TokenKind) string {
 		return "string"
 	case TOKEN_TAB:
 		return "tabulation"
+	case TOKEN_END:
+		return "EOF"
 	}
 	return "UNREACHABLE"
 }

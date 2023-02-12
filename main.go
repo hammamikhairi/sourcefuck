@@ -21,7 +21,7 @@ func init() {
 
 func main() {
 	// str := "package main \n // hello ducj\nimport \"fmt\" \n\nfunc main() {\n  fmt.Println(1/2) \n  return 0 \n}"
-	b, _ := os.ReadFile("main.go")
+	b, _ := os.ReadFile("./Lexer/Lexer.go")
 	str := string(b)
 	l := LexerInit(str, &tree)
 	tokens := l.GetTokens()
@@ -42,6 +42,11 @@ func main() {
 	old := -1
 	cursor := 0
 	for _, token := range tokens {
+
+		if token.Kind == TOKEN_END {
+			continue
+		}
+
 		for cursor != token.Addr.X {
 			cursor++
 			fmt.Print(" ")

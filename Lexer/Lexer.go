@@ -23,7 +23,7 @@ func (l *Lexer) ChopChar(len int) {
 }
 
 func (l *Lexer) Trim() {
-	for l.Cursor < l.Content_len && isSpace(string(l.Content[l.Cursor])) || l.getCharAt(l.Cursor) == "\n" {
+	for l.Cursor < l.Content_len && (isSpace(string(l.Content[l.Cursor])) || l.getCharAt(l.Cursor) == "\n") {
 		l.ChopChar(1)
 	}
 }
@@ -53,6 +53,13 @@ func (l *Lexer) NextToken() *Token {
 	token.Addr = Vec2i{l.Cursor, l.Line}
 
 	st := 0
+
+	if l.Cursor >= l.Content_len {
+		token.Kind = TOKEN_END
+		token.Len = 1
+		return token
+	}
+
 	if l.startsWith("\"") {
 		token.Kind = TOKEN_STRING
 		l.ChopChar(1)
