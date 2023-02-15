@@ -6,7 +6,7 @@ var KEYWORDS []string = []string{
 	"chan", "else", "goto", "package", "switch", "init",
 	"const", "fallthrough", "if", "range", "type", "len",
 	"continue", "for", "import", "return", "var", "make",
-	"panic",
+	"panic", "false", "true",
 }
 
 var TYPES []string = []string{
