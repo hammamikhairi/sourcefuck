@@ -22,7 +22,7 @@ var LIBRARIES []string = []string{
 
 // For Token position [inMain, col]
 type Vec2i struct {
-	X, Line int
+	X, Line, Origin int
 }
 
 type Token struct {

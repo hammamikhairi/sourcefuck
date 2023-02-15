@@ -3,18 +3,34 @@ package lexer
 import (
 	. "LanguageFuck/Types"
 	. "LanguageFuck/Utils"
+	"fmt"
+	// "fmt"
+	// "fmt"
 )
+
+// for imported libs
+var CurrentLineTokens []*Token
+var ImportedSymbs map[string]uint8 = make(map[string]uint8)
 
 type Lexer struct {
 	Content      string
 	Content_len  int
 	Cursor       int
 	Line         int
+	LineStart    int
 	KeywordsTree *map[string]uint8
 }
 
 func LexerInit(content string, tree *map[string]uint8) *Lexer {
-	return &Lexer{content, len(content), 0, 0, tree}
+	return &Lexer{
+		Content:      content,
+		Content_len:  len(content),
+		Cursor:       0,
+		Line:         0,
+		LineStart:    0,
+		KeywordsTree: tree,
+	}
+
 }
 
 func (l *Lexer) ChopChar(len int) {
@@ -23,6 +39,7 @@ func (l *Lexer) ChopChar(len int) {
 		l.Cursor++
 		if current == "\n" {
 			l.Line++
+			l.LineStart = l.Cursor
 		}
 	}
 }
@@ -34,6 +51,7 @@ func (l *Lexer) Trim() {
 }
 
 func (l *Lexer) getCharAt(pos int) string {
+	Assert(pos < l.Content_len, "INVALID POS")
 	return string(l.Content[pos])
 }
 
@@ -54,9 +72,10 @@ func (l *Lexer) startsWith(prefix string) bool {
 func (l *Lexer) NextToken() *Token {
 	l.Trim()
 	l.getCharAt(l.Cursor)
+	// fmt.Println(CurrentLineTokens)
 
 	token := &Token{}
-	token.Addr = Vec2i{X: l.Cursor, Line: l.Line}
+	token.Addr = Vec2i{X: l.Cursor, Line: l.Line, Origin: l.LineStart}
 
 	st := 0
 
@@ -125,10 +144,10 @@ func (l *Lexer) NextToken() *Token {
 			l.ChopChar(1)
 			st++
 		}
+		token.Len = st
 
-		lastToken := l.Content[token.Addr.X : token.Addr.X+st]
 		// PREPROC
-		if lastToken == "package" {
+		if l.GetTokenContent(token) == "package" {
 			token.Kind = TOKEN_PREPROC
 			for l.Cursor < l.Content_len && l.getCharAt(l.Cursor) != "\n" {
 				st++
@@ -139,7 +158,7 @@ func (l *Lexer) NextToken() *Token {
 		}
 
 		// PREPROC
-		if lastToken == "import" {
+		if l.GetTokenContent(token) == "import" {
 			token.Kind = TOKEN_PREPROC
 			l.Trim()
 			end := "\n"
@@ -165,7 +184,7 @@ func (l *Lexer) NextToken() *Token {
 		}
 
 		// KEYWORDS
-		if val, ok := (*l.KeywordsTree)[lastToken]; ok {
+		if val, ok := (*l.KeywordsTree)[l.GetTokenContent(token)]; ok {
 			switch val {
 			case 0:
 				token.Kind = TOKEN_KEYWORD
@@ -181,10 +200,19 @@ func (l *Lexer) NextToken() *Token {
 				l.ChopChar(1)
 				st++
 			}
-			token.Len = st
-			return token
+
+			for _, prev := range CurrentLineTokens {
+				if prev.Kind == TOKEN_SYMBOL {
+					// fmt.Println(l.GetTokenContent(token))
+					ImportedSymbs[l.GetTokenContent(prev)] = 0
+					prev.Kind = TOKEN_IMPORTED
+				}
+			}
 		}
 
+		if _, ok := ImportedSymbs[l.GetTokenContent(token)]; ok {
+			token.Kind = TOKEN_IMPORTED
+		}
 		token.Len = st
 		return token
 	}
@@ -196,43 +224,28 @@ func (l *Lexer) NextToken() *Token {
 }
 
 func (l *Lexer) GetTokens() *[]*Token {
+	// fmt.Println("!!!!!!!!!!!!!!!!", l.getCharAt(156), l.getCharAt(160))
 	tokens := []*Token{}
+	oldLine := -1
 	for l.Cursor < l.Content_len {
 		next := l.NextToken()
+		if next.Addr.Origin != oldLine {
+			// fmt.Println(CurrentLineTokens)
+			CurrentLineTokens = []*Token{}
+			oldLine = next.Addr.Origin
+		}
+		CurrentLineTokens = append(CurrentLineTokens, next)
+		// fmt.Println("<<<<<<\n", l.GetTokenContent(next), next.Addr.X, l.LineStart)
 		tokens = append(tokens, next)
+		// fmt.Println("<<<<<<\n", l.Content[l.LineStart:l.LineStart+next.Len)
 	}
+	fmt.Println(ImportedSymbs)
 	return &tokens
 }
 
 func (l *Lexer) GetTokenContent(token *Token) string {
 	Assert(token.Addr.X+token.Len <= l.Content_len, "TOKEN OUT OF RANGE")
 	return l.Content[token.Addr.X : token.Addr.X+token.Len]
-}
-
-func GetTokenName(tk TokenKind) string {
-	switch tk {
-	case TOKEN_INVALID:
-		return "invalid token"
-	case TOKEN_PREPROC:
-		return "preprocessor directive"
-	case TOKEN_SYMBOL:
-		return "symbol"
-	case TOKEN_KEYWORD:
-		return "keyword"
-	case TOKEN_TYPE:
-		return "type"
-	case TOKEN_LIB:
-		return "lib"
-	case TOKEN_COMMENT:
-		return "comment"
-	case TOKEN_STRING:
-		return "string"
-	case TOKEN_TAB:
-		return "tabulation"
-	case TOKEN_END:
-		return "EOF"
-	}
-	return "UNREACHABLE"
 }
 
 // to lex multiple files
