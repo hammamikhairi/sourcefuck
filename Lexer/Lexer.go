@@ -3,9 +3,6 @@ package lexer
 import (
 	. "LanguageFuck/Types"
 	. "LanguageFuck/Utils"
-	"fmt"
-	// "fmt"
-	// "fmt"
 )
 
 // for imported libs
@@ -224,22 +221,17 @@ func (l *Lexer) NextToken() *Token {
 }
 
 func (l *Lexer) GetTokens() *[]*Token {
-	// fmt.Println("!!!!!!!!!!!!!!!!", l.getCharAt(156), l.getCharAt(160))
 	tokens := []*Token{}
 	oldLine := -1
 	for l.Cursor < l.Content_len {
 		next := l.NextToken()
 		if next.Addr.Origin != oldLine {
-			// fmt.Println(CurrentLineTokens)
 			CurrentLineTokens = []*Token{}
 			oldLine = next.Addr.Origin
 		}
 		CurrentLineTokens = append(CurrentLineTokens, next)
-		// fmt.Println("<<<<<<\n", l.GetTokenContent(next), next.Addr.X, l.LineStart)
 		tokens = append(tokens, next)
-		// fmt.Println("<<<<<<\n", l.Content[l.LineStart:l.LineStart+next.Len)
 	}
-	fmt.Println(ImportedSymbs)
 	return &tokens
 }
 

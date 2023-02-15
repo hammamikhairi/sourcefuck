@@ -4,9 +4,6 @@ import (
 	. "LanguageFuck/Encrypter"
 	. "LanguageFuck/Lexer"
 	. "LanguageFuck/Types"
-	"fmt"
-	// "fmt"
-	// "fmt"
 )
 
 type Parser struct {
@@ -32,17 +29,10 @@ func (pr *Parser) Parse(l *Lexer, decrypt bool) {
 		token = tokens[i]
 		token_content := l.GetTokenContent(token)
 
-		fmt.Println(
-			l.GetTokenContent(token),
-			"\t<<", token.Addr.Line, token.Addr.X, token.Addr.Origin, ">>",
-			"\t<<", GetTokenName(token.Kind), ">>",
-		)
 		if token.Kind == TOKEN_IMPORTED {
 			enc = pr.Enc.Encrypt(token_content)
 			if i+1 < tokens_len && l.GetTokenContent(tokens[i+1]) == "." {
-				// fmt.Println(l.GetTokenContent(tokens[i+1]))
 				i += 2
-				// continue
 			}
 			pr.Swap[token_content] = enc
 		}
@@ -56,5 +46,4 @@ func (pr *Parser) Parse(l *Lexer, decrypt bool) {
 			pr.Swap[token_content] = enc
 		}
 	}
-	// fmt.Println(pr.Swap)
 }
