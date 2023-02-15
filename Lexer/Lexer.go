@@ -246,4 +246,5 @@ func (l *Lexer) ResetContent(content string) {
 	l.Content_len = len(content)
 	l.Cursor = 0
 	l.Line = 0
+	l.LineStart = 0
 }
