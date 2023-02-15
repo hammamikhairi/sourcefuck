@@ -9,6 +9,8 @@ import (
 // "unicode"
 )
 
+// TODO : for now i'm testing with caesar cipher, will change later
+
 type Encrypter struct {
 	key int
 }
