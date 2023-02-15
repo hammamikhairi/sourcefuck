@@ -30,8 +30,12 @@ func (pr *Parser) Parse(l *Lexer, decrypt bool) {
 		token_content := l.GetTokenContent(token)
 
 		if token.Kind == TOKEN_IMPORTED {
-			enc = pr.Enc.Encrypt(token_content)
-			if i+1 < tokens_len && l.GetTokenContent(tokens[i+1]) == "." {
+			if decrypt {
+				enc = pr.Enc.Decrypt(token_content)
+			} else {
+				enc = pr.Enc.Encrypt(token_content)
+			}
+			for i+1 < tokens_len && l.GetTokenContent(tokens[i+1]) == "." {
 				i += 2
 			}
 			pr.Swap[token_content] = enc
