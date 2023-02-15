@@ -8,7 +8,7 @@ So, if you're looking to make your life easier by making everyone else's harder,
 
 ## Usage
 
-The package is in it's final development stages.
+The package is in its final development stages.
 
 ## Supported Languages
 
