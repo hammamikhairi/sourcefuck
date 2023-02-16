@@ -41,24 +41,22 @@ func (c *Encrypter) Encrypt(plainText string) string {
 }
 
 func (c *Encrypter) Decrypt(cipherText string) string {
+	// The count of unique letters in the English alphabet
+	const ALPHA_LEN = 26
+
 	plainText := ""
 	for i := 0; i < len(cipherText); i++ {
 		char := cipherText[i]
-		if i == 0 && IsAlpha(char) {
-			// Maintain case of first letter
-			if IsUpper(char) {
-				char = (char-'A'+26-byte(c.key))%26 + 'A'
-			} else { // Lower
-				char = (char-'a'+26-byte(c.key))%26 + 'a'
+
+		// Apply Caesar cipher, and maintain case of letters
+		if IsAlpha(char) {
+			A := byte('A')
+			if IsLower(char) {
+				A = 'a'
 			}
-		} else {
-			// Apply inverse Caesar cipher
-			if IsUpper(char) {
-				char = (char-'A'+26-byte(c.key))%26 + 'A'
-			} else if IsLower(char) {
-				char = (char-'a'+26-byte(c.key))%26 + 'a'
-			}
+			char = (char-A+ALPHA_LEN-byte(c.key))%ALPHA_LEN + A
 		}
+
 		plainText += string(char)
 	}
 	return plainText
