@@ -29,9 +29,9 @@ func (c *Encrypter) Encrypt(plainText string) string {
 			}
 		} else {
 			// Apply Caesar cipher
-			if char >= 'A' && char <= 'Z' {
+			if isUpper(string(char)) {
 				char = byte(int(char-'A'+byte(c.key))%26 + 'A')
-			} else if char >= 'a' && char <= 'z' {
+			} else if isLower(string(char)) {
 				char = byte(int(char-'a'+byte(c.key))%26 + 'a')
 			}
 		}
@@ -44,18 +44,18 @@ func (c *Encrypter) Decrypt(cipherText string) string {
 	plainText := ""
 	for i := 0; i < len(cipherText); i++ {
 		char := cipherText[i]
-		if i == 0 && (char >= 'A' && char <= 'Z' || char >= 'a' && char <= 'z') {
+		if i == 0 && IsAlpha(string(char)) {
 			// Maintain case of first letter
-			if char >= 'A' && char <= 'Z' {
+			if isUpper(string(char)) {
 				char = byte(int(char-'A'+26-byte(c.key))%26 + 'A')
-			} else {
+			} else { // Lower
 				char = byte(int(char-'a'+26-byte(c.key))%26 + 'a')
 			}
 		} else {
 			// Apply inverse Caesar cipher
-			if char >= 'A' && char <= 'Z' {
+			if isUpper(string(char)) {
 				char = byte(int(char-'A'+26-byte(c.key))%26 + 'A')
-			} else if char >= 'a' && char <= 'z' {
+			} else if isLower(string(char)) {
 				char = byte(int(char-'a'+26-byte(c.key))%26 + 'a')
 			}
 		}
