@@ -42,7 +42,7 @@ func (c *Encrypter) Encrypt(plainText string) string {
 
 func (c *Encrypter) Decrypt(cipherText string) string {
 	// The count of unique letters in the English alphabet
-	const ALPHA_LEN = 26
+	const ALPHA_LEN byte = 26
 
 	plainText := ""
 	for i := 0; i < len(cipherText); i++ {
