@@ -8,24 +8,24 @@ import (
 	"unicode"
 )
 
-// checks if the entire string is a single whitespace
+// checks if the entire string is a single ASCII whitespace
 func IsSpace(char string) bool {
 	return char == " "
 }
 
-// checks if the 1st byte-character in the string is an uppercase alphabet letter
-func IsUpper(char string) bool {
-	return char[0] >= 'A' && char[0] <= 'Z'
+// checks if ASCII uppercase
+func IsUpper(char byte) bool {
+	return char >= 'A' && char <= 'Z'
 }
 
-// checks if the 1st byte-character in the string is a lowercase alphabet letter
-func IsLower(char string) bool {
-	return char[0] >= 'a' && char[0] <= 'z'
+// checks if ASCII lowercase
+func IsLower(char byte) bool {
+	return char >= 'a' && char <= 'z'
 }
 
-// checks if the 1st byte-character in the string is an alphabet letter
+// checks if the 1st byte-character is an ASCII alphabet letter
 func IsAlpha(char string) bool {
-	return IsLower(char) || IsUpper(char)
+	return IsLower(char[0]) || IsUpper(char[0])
 }
 
 func IsSymbolChar(char string) bool {
@@ -33,7 +33,7 @@ func IsSymbolChar(char string) bool {
 }
 
 func Assert(cond bool, errorM string) {
-	if cond == false {
+	if !cond {
 		log.Fatal(errorM)
 	}
 }
