@@ -47,16 +47,16 @@ func (c *Encrypter) Decrypt(cipherText string) string {
 		if i == 0 && IsAlpha(char) {
 			// Maintain case of first letter
 			if IsUpper(char) {
-				char = byte(int(char-'A'+26-byte(c.key))%26 + 'A')
+				char = byte((char-'A'+26-byte(c.key))%26 + 'A')
 			} else { // Lower
-				char = byte(int(char-'a'+26-byte(c.key))%26 + 'a')
+				char = byte((char-'a'+26-byte(c.key))%26 + 'a')
 			}
 		} else {
 			// Apply inverse Caesar cipher
 			if IsUpper(char) {
-				char = byte(int(char-'A'+26-byte(c.key))%26 + 'A')
+				char = byte((char-'A'+26-byte(c.key))%26 + 'A')
 			} else if IsLower(char) {
-				char = byte(int(char-'a'+26-byte(c.key))%26 + 'a')
+				char = byte((char-'a'+26-byte(c.key))%26 + 'a')
 			}
 		}
 		plainText += string(char)
