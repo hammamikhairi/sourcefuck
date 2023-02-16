@@ -9,8 +9,8 @@ import (
 )
 
 // checks if the entire string is a single ASCII whitespace
-func IsSpace(char string) bool {
-	return char == " "
+func IsSpace(s string) bool {
+	return s == " "
 }
 
 // checks if ASCII uppercase
@@ -24,12 +24,13 @@ func IsLower(char byte) bool {
 }
 
 // checks if the 1st byte-character is an ASCII alphabet letter
-func IsAlpha(char string) bool {
-	return IsLower(char[0]) || IsUpper(char[0])
+func IsAlpha(char byte) bool {
+	return IsLower(char) || IsUpper(char)
 }
 
-func IsSymbolChar(char string) bool {
-	return unicode.IsNumber(rune(char[0])) || IsAlpha(char) || char == "_"
+func IsSymbolChar(s string) bool {
+	char := s[0]
+	return unicode.IsNumber(rune(char)) || IsAlpha(char) || char == '_'
 }
 
 func Assert(cond bool, errorM string) {

@@ -20,7 +20,7 @@ func (c *Encrypter) Encrypt(plainText string) string {
 	cipherText := ""
 	for i := 0; i < len(plainText); i++ {
 		char := plainText[i]
-		if i == 0 && IsAlpha(string(char)) {
+		if i == 0 && IsAlpha(char) {
 			// Maintain case of first letter
 			if IsUpper(char) {
 				char = byte(int(char-'A'+byte(c.key))%26 + 'A')
@@ -44,7 +44,7 @@ func (c *Encrypter) Decrypt(cipherText string) string {
 	plainText := ""
 	for i := 0; i < len(cipherText); i++ {
 		char := cipherText[i]
-		if i == 0 && IsAlpha(string(char)) {
+		if i == 0 && IsAlpha(char) {
 			// Maintain case of first letter
 			if IsUpper(char) {
 				char = byte(int(char-'A'+26-byte(c.key))%26 + 'A')

@@ -135,7 +135,7 @@ func (l *Lexer) NextToken() *Token {
 		return token
 	}
 
-	if IsAlpha(l.getCharAt(l.Cursor)) {
+	if IsAlpha(l.getCharAt(l.Cursor)[0]) {
 		token.Kind = TOKEN_SYMBOL
 		for l.Cursor < l.Content_len && IsSymbolChar(l.getCharAt(l.Cursor)) {
 			l.ChopChar(1)
