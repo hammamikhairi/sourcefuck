@@ -7,6 +7,7 @@ import (
 // "crypto/aes"
 // "crypto/cipher"
 // "unicode"
+	. "LanguageFuck/Utils"
 )
 
 // TODO : for now i'm testing with caesar cipher, will change later
@@ -19,11 +20,11 @@ func (c *Encrypter) Encrypt(plainText string) string {
 	cipherText := ""
 	for i := 0; i < len(plainText); i++ {
 		char := plainText[i]
-		if i == 0 && (char >= 'A' && char <= 'Z' || char >= 'a' && char <= 'z') {
+		if i == 0 && IsAlpha(string(char)) {
 			// Maintain case of first letter
-			if char >= 'A' && char <= 'Z' {
+			if isUpper(string(char)) {
 				char = byte(int(char-'A'+byte(c.key))%26 + 'A')
-			} else {
+			} else { // Lower
 				char = byte(int(char-'a'+byte(c.key))%26 + 'a')
 			}
 		} else {
