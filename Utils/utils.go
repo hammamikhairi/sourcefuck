@@ -28,8 +28,7 @@ func IsAlpha(char byte) bool {
 	return IsLower(char) || IsUpper(char)
 }
 
-func IsSymbolChar(s string) bool {
-	char := s[0]
+func IsSymbolChar(char byte) bool {
 	return unicode.IsNumber(rune(char)) || IsAlpha(char) || char == '_'
 }
 
