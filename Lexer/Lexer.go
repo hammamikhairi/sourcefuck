@@ -42,20 +42,20 @@ func (l *Lexer) ChopChar(len int) {
 }
 
 func (l *Lexer) Trim() {
-	for l.Cursor < l.Content_len-1 && (IsSpace(string(l.Content[l.Cursor])) || l.getCharAt(l.Cursor) == "\n") {
+	for l.Cursor < l.Content_len-1 && (IsSpace(string(l.Content[l.Cursor])) || l.getCharAt(l.Cursor) == '\n') {
 		l.ChopChar(1)
 	}
 }
 
-func (l *Lexer) getCharAt(pos int) string {
+func (l *Lexer) getCharAt(pos int) rune {
 	Assert(pos < l.Content_len, "INVALID POS")
-	return string(l.Content[pos])
+	return rune(l.Content[pos])
 }
 
 func (l *Lexer) startsWith(prefix string) bool {
 
 	if len(prefix) == 1 {
-		return l.getCharAt(l.Cursor) == prefix
+		return l.getCharAt(l.Cursor) == rune(prefix[0])
 	}
 
 	for i := 0; i < len(prefix); i++ {
@@ -87,7 +87,7 @@ func (l *Lexer) NextToken() *Token {
 		l.ChopChar(1)
 		for l.Cursor < l.Content_len-1 {
 
-			if l.getCharAt(l.Cursor) == "\"" && l.getCharAt(l.Cursor-1) != "\\" {
+			if l.getCharAt(l.Cursor) == '"' && l.getCharAt(l.Cursor-1) != '\\' {
 				break
 			}
 
@@ -105,7 +105,7 @@ func (l *Lexer) NextToken() *Token {
 		token.Kind = TOKEN_TAB
 		l.ChopChar(1)
 		st++
-		for l.getCharAt(l.Cursor) == "\t" {
+		for l.getCharAt(l.Cursor) == '\t' {
 			l.ChopChar(1)
 			st++
 		}
@@ -123,7 +123,7 @@ func (l *Lexer) NextToken() *Token {
 			return token
 		}
 		token.Kind = TOKEN_COMMENT
-		for l.Cursor < l.Content_len && l.getCharAt(l.Cursor) != "\n" {
+		for l.Cursor < l.Content_len && l.getCharAt(l.Cursor) != '\n' {
 			st++
 			l.ChopChar(1)
 		}
@@ -135,9 +135,9 @@ func (l *Lexer) NextToken() *Token {
 		return token
 	}
 
-	if IsAlpha(l.getCharAt(l.Cursor)) {
+	if IsAlpha(byte(l.getCharAt(l.Cursor))) {
 		token.Kind = TOKEN_SYMBOL
-		for l.Cursor < l.Content_len && IsSymbolChar(l.getCharAt(l.Cursor)) {
+		for l.Cursor < l.Content_len && IsSymbolChar(byte(l.getCharAt(l.Cursor))) {
 			l.ChopChar(1)
 			st++
 		}
@@ -146,7 +146,7 @@ func (l *Lexer) NextToken() *Token {
 		// PREPROC
 		if l.GetTokenContent(token) == "package" {
 			token.Kind = TOKEN_PREPROC
-			for l.Cursor < l.Content_len && l.getCharAt(l.Cursor) != "\n" {
+			for l.Cursor < l.Content_len && l.getCharAt(l.Cursor) != '\n' {
 				st++
 				l.ChopChar(1)
 			}
@@ -158,9 +158,9 @@ func (l *Lexer) NextToken() *Token {
 		if l.GetTokenContent(token) == "import" {
 			token.Kind = TOKEN_PREPROC
 			l.Trim()
-			end := "\n"
+			end := '\n'
 			if l.startsWith("(") {
-				end = ")"
+				end = ')'
 			}
 
 			for l.Cursor < l.Content_len && l.getCharAt(l.Cursor) != end {
@@ -168,7 +168,7 @@ func (l *Lexer) NextToken() *Token {
 				l.ChopChar(1)
 			}
 
-			if end == ")" {
+			if end == ')' {
 				st += 1
 				l.ChopChar(1)
 			}
@@ -193,7 +193,7 @@ func (l *Lexer) NextToken() *Token {
 		}
 
 		if token.Kind == TOKEN_LIB {
-			for l.Cursor < l.Content_len && (IsSymbolChar(l.getCharAt(l.Cursor)) || l.getCharAt(l.Cursor) == ".") {
+			for l.Cursor < l.Content_len && (IsSymbolChar(byte(l.getCharAt(l.Cursor))) || l.getCharAt(l.Cursor) == '.') {
 				l.ChopChar(1)
 				st++
 			}

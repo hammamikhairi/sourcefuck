@@ -8,20 +8,32 @@ import (
 	"unicode"
 )
 
-func IsSpace(char string) bool {
-	return char == " "
+// checks if the entire string is a single ASCII whitespace
+func IsSpace(s string) bool {
+	return s == " "
 }
 
-func IsAlpha(char string) bool {
-	return (char[0] >= 'a' && char[0] <= 'z') || (char[0] >= 'A' && char[0] <= 'Z')
+// checks if ASCII uppercase
+func IsUpper(char byte) bool {
+	return char >= 'A' && char <= 'Z'
 }
 
-func IsSymbolChar(char string) bool {
-	return unicode.IsNumber(rune(char[0])) || IsAlpha(char) || char == "_"
+// checks if ASCII lowercase
+func IsLower(char byte) bool {
+	return char >= 'a' && char <= 'z'
+}
+
+// checks if the 1st byte-character is an ASCII alphabet letter
+func IsAlpha(char byte) bool {
+	return IsLower(char) || IsUpper(char)
+}
+
+func IsSymbolChar(char byte) bool {
+	return unicode.IsNumber(rune(char)) || IsAlpha(char) || char == '_'
 }
 
 func Assert(cond bool, errorM string) {
-	if cond == false {
+	if !cond {
 		log.Fatal(errorM)
 	}
 }
@@ -45,10 +57,17 @@ func WriteStringToFile(path, content string) error {
 }
 
 func getExtension(fileName string) string {
-	if dotIndex := strings.LastIndex(fileName, "."); dotIndex != -2 {
-		return fileName[dotIndex+1:]
+	dotIndex := strings.LastIndex(fileName, ".")
+	// special case for no dots (-1), or dotfile (0)
+	if dotIndex < 1 {
+		return ""
 	}
-	return ""
+	beforeDot := fileName[dotIndex-1]
+	// Unix and Windows dotfiles
+	if beforeDot == '/' || beforeDot == '\\' {
+		return ""
+	}
+	return fileName[dotIndex+1:]
 }
 
 func GetFiles(path, ext string) ([]string, string) {
