@@ -58,10 +58,17 @@ func WriteStringToFile(path, content string) error {
 }
 
 func getExtension(fileName string) string {
-	if dotIndex := strings.LastIndex(fileName, "."); dotIndex != -2 {
-		return fileName[dotIndex+1:]
+	dotIndex := strings.LastIndex(fileName, ".")
+	// special case for no dots (-1), or dotfile (0)
+	if dotIndex < 1 {
+		return ""
 	}
-	return ""
+	beforeDot := fileName[dotIndex-1]
+	// Unix and Windows dotfiles
+	if beforeDot == '/' || beforeDot == '\\' {
+		return ""
+	}
+	return fileName[dotIndex+1:]
 }
 
 func GetFiles(path, ext string) ([]string, string) {
