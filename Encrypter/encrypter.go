@@ -16,24 +16,21 @@ type Encrypter struct {
 	key int
 }
 
+// The count of unique letters in the English alphabet
+const ALPHA_LEN byte = 26
+
 func (c *Encrypter) Encrypt(plainText string) string {
 	cipherText := ""
 	for i := 0; i < len(plainText); i++ {
 		char := plainText[i]
-		if i == 0 && IsAlpha(char) {
-			// Maintain case of first letter
-			if IsUpper(char) {
-				char = byte(int(char-'A'+byte(c.key))%26 + 'A')
-			} else { // Lower
-				char = byte(int(char-'a'+byte(c.key))%26 + 'a')
+
+		// Apply Caesar cipher, and maintain case of letters
+		if IsAlpha(char) {
+			A := byte('A')
+			if IsLower(char) {
+				A = 'a'
 			}
-		} else {
-			// Apply Caesar cipher
-			if IsUpper(char) {
-				char = byte(int(char-'A'+byte(c.key))%26 + 'A')
-			} else if IsLower(char) {
-				char = byte(int(char-'a'+byte(c.key))%26 + 'a')
-			}
+			char = (char-A+byte(c.key))%ALPHA_LEN + A
 		}
 		cipherText += string(char)
 	}
@@ -41,9 +38,6 @@ func (c *Encrypter) Encrypt(plainText string) string {
 }
 
 func (c *Encrypter) Decrypt(cipherText string) string {
-	// The count of unique letters in the English alphabet
-	const ALPHA_LEN byte = 26
-
 	plainText := ""
 	for i := 0; i < len(cipherText); i++ {
 		char := cipherText[i]
@@ -56,7 +50,6 @@ func (c *Encrypter) Decrypt(cipherText string) string {
 			}
 			char = (char-A+ALPHA_LEN-byte(c.key))%ALPHA_LEN + A
 		}
-
 		plainText += string(char)
 	}
 	return plainText
