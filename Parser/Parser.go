@@ -21,15 +21,17 @@ func ParserInit(tokens *[]*Token, key int) *Parser {
 }
 
 func (pr *Parser) Parse(l *Lexer, decrypt bool) {
-	var enc string
-	var token *Token
-	var tokens []*Token = (*pr.Tokens)
-	var tokens_len int = len(*pr.Tokens)
+	var (
+		enc        string
+		token      *Token
+		tokens     []*Token = (*pr.Tokens)
+		tokens_len int      = len(*pr.Tokens)
+	)
 	for i := 0; i < tokens_len; i++ {
 		token = tokens[i]
 		token_content := l.GetTokenContent(token)
 
-		if token.Kind == TOKEN_IMPORTED {
+		if _, ok := pr.Swap[token_content]; token.Kind == TOKEN_IMPORTED && !ok {
 			if decrypt {
 				enc = pr.Enc.Decrypt(token_content)
 			} else {
