@@ -171,16 +171,20 @@ func (l *Lexer) NextToken() *Token {
 				end = ')'
 			}
 
+			includedNewLines := 0
 			for l.Cursor < l.Content_len && l.getCharAt(l.Cursor) != end {
 				st++
 				l.ChopChar(1)
+				if l.getCharAt(l.Cursor) == '\n' {
+					includedNewLines++
+				}
 			}
 
 			if end == ')' {
 				st += 1
 				l.ChopChar(1)
 			}
-
+			l.Line -= includedNewLines
 			st++
 			l.ChopChar(1)
 
