@@ -6,7 +6,11 @@ import (
 )
 
 // for imported libs
-var CurrentLineTokens []*Token
+type CurrentState struct {
+	IsAssign          bool
+	CurrentLineTokens []*Token
+}
+
 var ImportedSymbs map[string]uint8 = make(map[string]uint8)
 
 type Lexer struct {
@@ -16,6 +20,7 @@ type Lexer struct {
 	Line         int
 	LineStart    int
 	KeywordsTree *map[string]uint8
+	Cs           *CurrentState
 }
 
 func LexerInit(content string, tree *map[string]uint8) *Lexer {
@@ -26,6 +31,9 @@ func LexerInit(content string, tree *map[string]uint8) *Lexer {
 		Line:         0,
 		LineStart:    0,
 		KeywordsTree: tree,
+		Cs: &CurrentState{
+			IsAssign: false,
+		},
 	}
 
 }
@@ -198,11 +206,12 @@ func (l *Lexer) NextToken() *Token {
 				st++
 			}
 
-			for _, prev := range CurrentLineTokens {
-				if prev.Kind == TOKEN_SYMBOL {
-					// fmt.Println(l.GetTokenContent(token))
-					ImportedSymbs[l.GetTokenContent(prev)] = 0
-					prev.Kind = TOKEN_IMPORTED
+			if l.Cs.IsAssign {
+				for _, prev := range l.Cs.CurrentLineTokens {
+					if prev.Kind == TOKEN_SYMBOL {
+						ImportedSymbs[l.GetTokenContent(prev)] = 0
+						prev.Kind = TOKEN_IMPORTED
+					}
 				}
 			}
 		}
@@ -214,8 +223,13 @@ func (l *Lexer) NextToken() *Token {
 		return token
 	}
 
-	l.ChopChar(1)
 	token.Kind = TOKEN_INVALID
+
+	if l.startsWith("=") {
+		token.Kind = TOKEN_ASSIGN
+	}
+
+	l.ChopChar(1)
 	token.Len = 1
 	return token
 }
@@ -226,10 +240,15 @@ func (l *Lexer) GetTokens() *[]*Token {
 	for l.Cursor < l.Content_len {
 		next := l.NextToken()
 		if next.Addr.Origin != oldLine {
-			CurrentLineTokens = []*Token{}
+			l.Cs.CurrentLineTokens = []*Token{}
+			l.Cs.IsAssign = false
 			oldLine = next.Addr.Origin
 		}
-		CurrentLineTokens = append(CurrentLineTokens, next)
+		if next.Kind == TOKEN_ASSIGN {
+			l.Cs.IsAssign = true
+		}
+
+		l.Cs.CurrentLineTokens = append(l.Cs.CurrentLineTokens, next)
 		tokens = append(tokens, next)
 	}
 	return &tokens
@@ -247,4 +266,6 @@ func (l *Lexer) ResetContent(content string) {
 	l.Cursor = 0
 	l.Line = 0
 	l.LineStart = 0
+	l.Cs.CurrentLineTokens = []*Token{}
+	l.Cs.IsAssign = false
 }

@@ -14,6 +14,7 @@ const (
 	TOKEN_COMMENT
 	TOKEN_STRING
 	TOKEN_TAB
+	TOKEN_ASSIGN
 	TOKEN_END
 )
 
@@ -39,6 +40,8 @@ func GetTokenName(tk TokenKind) string {
 		return "string"
 	case TOKEN_TAB:
 		return "tabulation"
+	case TOKEN_ASSIGN:
+		return "assign"
 	case TOKEN_END:
 		return "EOF"
 	}
