@@ -1,4 +1,4 @@
-package langfuck
+package main
 
 import (
 	"flag"
