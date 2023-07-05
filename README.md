@@ -1,19 +1,61 @@
-# LangFuck
+# LangFuck - The Ultimate Code Obfuscation Tool
 
-Oh, boy, have I got a treat for you! Introducing the latest and greatest in code obfuscation technology! Now you can make your code completely unintelligible to anyone who dares to try and read it! And the best part? Your code will still run perfectly fine even after it's been encrypted, just to really confuse the heck out of anyone who tries to make sense of it!
+LangFuck is a command-line tool that provides powerful code obfuscation capabilities, allowing you to make your Golang code completely unintelligible while maintaining its functionality. It offers a seamless solution for obfuscating your code, ensuring that it becomes extremely challenging for others to understand.
 
-But wait, it gets even better! With this package, you can encrypt not just one, but MULTIPLE directories of code! That's right, you can make entire swaths of your project unreadable, just to ensure that no one will ever be able to understand what you were thinking when you wrote it.
+![idk](./banner.png)
 
-So, if you're looking to make your life easier by making everyone else's harder, look no further than our encryption package! Guaranteed to make your code as incomprehensible as possible, or your money back! (Just kidding, we're not actually giving refunds. Good luck figuring out how to use it!)
+## Features
+
+- Code obfuscation: LangFuck encrypts your Golang code, making it unreadable to others.
+- Preserves functionality: Despite the encryption, your code will still run perfectly fine.
+- Multiple directory support: Encrypt entire directories of code, increasing the level of confusion.
+- Easy usage: Simple and straightforward to use on your projects.
+- Future expansion: Stay tuned for updates as I plan to support additional programming languages.
 
 ## Usage
 
-The package is in its final development stages.
+To obfuscate or decrypt your Golang code using LangFuck, use the following command:
 
-## Supported Languages
+```bash
+langfuck --path [path/to/your/code] --ext [file_extension] --key [encryption_key] [--out [output_directory]] [--dec]
+```
 
-The package currently only works on Golang code, but fear not my dear developer, we have big plans for the future. We'll be scaling to more languages soon!
+* `--path` : Specifies the path to your Golang file or directory that you want to obfuscate or decrypt.
+* `--ext` : (Optional for directories) Specifies the file extension of the targeted files within the directory (only `go` is supported now but will add more languages in future versions).
+* `--key` : Specifies the encryption/decryption key. The default key is 8 if not specified. The current encryption method used is the Caesar cipher. Future versions of LangFuck will incorporate a more advanced encryption algorithm.
+* `--out` : (Optional) Specifies the output directory for the obfuscated or decrypted code. If not provided, the encrypted/decrypted code will be written to either [path/to/your/code]/Dec or [path/to/your/code]/Enc depending on the usage.
+* `--dec` : (Optional) Indicates that the operation is decryption instead of obfuscation. If specified, the tool will decrypt the encrypted code.
 
-## Dev Note
+### Examples:
 
-And isn't this what programming is all about? Making things needlessly complicated for no reason?
+* Obfuscating a single file:
+
+```bash
+langfuck --path /path/to/your/code/main.go --key 9
+```
+
+* Obfuscating a directory of files with the ".go" extension:
+```bash
+langfuck --path /path/to/your/code/ --ext go --key 9
+```
+
+* Decrypting a directory of files with the ".go" extension:
+```bash
+langfuck --path /path/to/your/code/ --ext go --key 9 --dec
+```
+
+* Obfuscating a directory and specifying the output directory:
+```bash
+langfuck --path /path/to/your/code/ --ext go --key 9 --out /path/to/out/
+```
+
+Note: When decrypting, the encrypted files should be present in the specified path or directory.
+
+The obfuscated or decrypted code will be generated in the output directory specified by --out, or in the default output directory if --out is not provided.
+
+## Contributing
+
+I welcome contributions from the open-source community to enhance LangFuck and extend its capabilities. If you're interested in contributing, please follow the guidelines in CONTRIBUTING.md.
+
+## License
+This package is licensed under MIT license. See LICENSE for details.se.

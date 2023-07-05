@@ -72,6 +72,10 @@ func getExtension(fileName string) string {
 
 func GetFiles(path, ext string) ([]string, string) {
 
+	if path == "" {
+		log.Fatal("Please specify a path using the -path flag.")
+	}
+
 	var files []string
 	base, _ := filepath.Abs(path)
 	if path == "" {
@@ -104,12 +108,10 @@ func GetFiles(path, ext string) ([]string, string) {
 			os.Exit(1)
 		}
 	} else {
-		path = filepath.Clean(path)
-		if ext == "" {
-			ext = getExtension(path)
-		}
+		path = filepath.Base(path)
 		files = append(files, path)
-		base = base[:len(base)-len(files[0])]
+
+		base = filepath.Dir(base)
 	}
 
 	return files, base
@@ -129,4 +131,23 @@ func CreateFileWithPath(path string) (*os.File, error) {
 	}
 
 	return f, nil
+}
+
+func ProcessFlags(path, ext, OutDir string, dec bool) ([]string, string, string) {
+
+	files, base := GetFiles(path, ext)
+	var OutDirPath string = base
+
+	if OutDir == "" {
+		if dec {
+			OutDirPath = filepath.Join(OutDirPath, "/Dec")
+		} else {
+			OutDirPath = filepath.Join(OutDirPath, "/Enc")
+		}
+	} else {
+		OutDirPath, _ = filepath.Abs(OutDir)
+	}
+
+	println("!=!", base)
+	return files, base, OutDirPath
 }

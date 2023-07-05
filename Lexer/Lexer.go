@@ -1,15 +1,9 @@
 package lexer
 
 import (
-	. "LanguageFuck/Types"
-	. "LanguageFuck/Utils"
+	. "github.com/hammamikhairi/langfuck/Types"
+	. "github.com/hammamikhairi/langfuck/Utils"
 )
-
-// for imported libs
-type CurrentState struct {
-	IsAssign          bool
-	CurrentLineTokens []*Token
-}
 
 var ImportedSymbs map[string]uint8 = make(map[string]uint8)
 
@@ -20,7 +14,6 @@ type Lexer struct {
 	Line         int
 	LineStart    int
 	KeywordsTree *map[string]uint8
-	Cs           *CurrentState
 }
 
 func LexerInit(content string, tree *map[string]uint8) *Lexer {
@@ -31,9 +24,6 @@ func LexerInit(content string, tree *map[string]uint8) *Lexer {
 		Line:         0,
 		LineStart:    0,
 		KeywordsTree: tree,
-		Cs: &CurrentState{
-			IsAssign: false,
-		},
 	}
 
 }
@@ -209,15 +199,6 @@ func (l *Lexer) NextToken() *Token {
 				l.ChopChar(1)
 				st++
 			}
-
-			if l.Cs.IsAssign {
-				for _, prev := range l.Cs.CurrentLineTokens {
-					if prev.Kind == TOKEN_SYMBOL {
-						ImportedSymbs[l.GetTokenContent(prev)] = 0
-						prev.Kind = TOKEN_IMPORTED
-					}
-				}
-			}
 		}
 
 		if _, ok := ImportedSymbs[l.GetTokenContent(token)]; ok {
@@ -228,10 +209,6 @@ func (l *Lexer) NextToken() *Token {
 	}
 
 	token.Kind = TOKEN_INVALID
-
-	if l.startsWith("=") {
-		token.Kind = TOKEN_ASSIGN
-	}
 
 	l.ChopChar(1)
 	token.Len = 1
@@ -244,15 +221,9 @@ func (l *Lexer) GetTokens() *[]*Token {
 	for l.Cursor < l.Content_len {
 		next := l.NextToken()
 		if next.Addr.Origin != oldLine {
-			l.Cs.CurrentLineTokens = []*Token{}
-			l.Cs.IsAssign = false
 			oldLine = next.Addr.Origin
 		}
-		if next.Kind == TOKEN_ASSIGN {
-			l.Cs.IsAssign = true
-		}
 
-		l.Cs.CurrentLineTokens = append(l.Cs.CurrentLineTokens, next)
 		tokens = append(tokens, next)
 	}
 	return &tokens
@@ -263,13 +234,42 @@ func (l *Lexer) GetTokenContent(token *Token) string {
 	return l.Content[token.Addr.X : token.Addr.X+token.Len]
 }
 
-// to lex multiple files
-func (l *Lexer) ResetContent(content string) {
+func (l *Lexer) SetContent(content string) {
 	l.Content = content
 	l.Content_len = len(content)
 	l.Cursor = 0
 	l.Line = 0
 	l.LineStart = 0
-	l.Cs.CurrentLineTokens = []*Token{}
-	l.Cs.IsAssign = false
+}
+
+func (l *Lexer) FormatCode(tokens *[]*Token, swap *map[string]string) (res string) {
+	old := 0
+	cursor := 0
+	for _, token := range *tokens {
+
+		if token.Kind == TOKEN_END {
+			continue
+		}
+
+		for cursor != token.Addr.X {
+			cursor++
+			res += " "
+		}
+
+		if token.Addr.Line != old {
+			for old != token.Addr.Line {
+				res += "\n"
+				old++
+			}
+		}
+
+		val, ok := (*swap)[l.GetTokenContent(token)]
+		if (token.Kind == TOKEN_SYMBOL || token.Kind == TOKEN_IMPORTED) && ok {
+			res += val
+		} else {
+			res += l.GetTokenContent(token)
+		}
+		cursor += token.Len
+	}
+	return
 }
