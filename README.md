@@ -12,6 +12,13 @@ LangFuck is a command-line tool that provides powerful code obfuscation capabili
 - Easy usage: Simple and straightforward to use on your projects.
 - Future expansion: Stay tuned for updates as I plan to support additional programming languages.
 
+## Installation
+To install LangFuck, you need to have Go installed on your system. Then, run this command:
+
+```bash
+go install github.com/hammamikhairi/langfuck@latest
+```
+
 ## Usage
 
 To obfuscate or decrypt your Golang code using LangFuck, use the following command:
