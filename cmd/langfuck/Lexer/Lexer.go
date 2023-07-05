@@ -1,8 +1,8 @@
 package lexer
 
 import (
-	. "github.com/hammamikhairi/langfuck/Types"
-	. "github.com/hammamikhairi/langfuck/Utils"
+	. "github.com/hammamikhairi/langfuck/cmd/langfuck/Types"
+	. "github.com/hammamikhairi/langfuck/cmd/langfuck/Utils"
 )
 
 var ImportedSymbs map[string]uint8 = make(map[string]uint8)

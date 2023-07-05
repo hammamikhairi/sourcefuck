@@ -6,10 +6,10 @@ import (
 	"os"
 	"path/filepath"
 
-	. "github.com/hammamikhairi/langfuck/Lexer"
-	. "github.com/hammamikhairi/langfuck/Parser"
-	. "github.com/hammamikhairi/langfuck/Types"
-	. "github.com/hammamikhairi/langfuck/Utils"
+	. "github.com/hammamikhairi/langfuck/cmd/langfuck/Lexer"
+	. "github.com/hammamikhairi/langfuck/cmd/langfuck/Parser"
+	. "github.com/hammamikhairi/langfuck/cmd/langfuck/Types"
+	. "github.com/hammamikhairi/langfuck/cmd/langfuck/Utils"
 )
 
 var (

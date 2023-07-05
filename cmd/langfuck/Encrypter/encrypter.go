@@ -7,7 +7,7 @@ import (
 	// "crypto/aes"
 	// "crypto/cipher"
 	// "unicode"
-	. "github.com/hammamikhairi/langfuck/Utils"
+	. "github.com/hammamikhairi/langfuck/cmd/langfuck/Utils"
 )
 
 // TODO : for now i'm testing with caesar cipher, will change later

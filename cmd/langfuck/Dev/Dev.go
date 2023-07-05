@@ -3,8 +3,8 @@ package dev
 import (
 	"fmt"
 
-	. "github.com/hammamikhairi/langfuck/Lexer"
-	. "github.com/hammamikhairi/langfuck/Types"
+	. "github.com/hammamikhairi/langfuck/cmd/langfuck/Lexer"
+	. "github.com/hammamikhairi/langfuck/cmd/langfuck/Types"
 )
 
 func DebugTokens(l *Lexer, tokens *[]*Token) {
