@@ -1,9 +1,9 @@
 package parser
 
 import (
-	. "github.com/hammamikhairi/langfuck/cmd/langfuck/Encrypter"
-	. "github.com/hammamikhairi/langfuck/cmd/langfuck/Lexer"
-	. "github.com/hammamikhairi/langfuck/cmd/langfuck/Types"
+	. "github.com/hammamikhairi/sourcefuck/cmd/sourcefuck/Encrypter"
+	. "github.com/hammamikhairi/sourcefuck/cmd/sourcefuck/Lexer"
+	. "github.com/hammamikhairi/sourcefuck/cmd/sourcefuck/Types"
 )
 
 type Parser struct {

@@ -7,17 +7,23 @@ import (
 	// "crypto/aes"
 	// "crypto/cipher"
 	// "unicode"
-	. "github.com/hammamikhairi/langfuck/cmd/langfuck/Utils"
+	. "github.com/hammamikhairi/sourcefuck/cmd/sourcefuck/Utils"
 )
 
 // TODO : for now i'm testing with caesar cipher, will change later
+
+// The count of unique letters in the English alphabet
+const ALPHA_LEN byte = 26
 
 type Encrypter struct {
 	key int
 }
 
-// The count of unique letters in the English alphabet
-const ALPHA_LEN byte = 26
+func EncrypterInit(pwd int) *Encrypter {
+	return &Encrypter{
+		key: pwd,
+	}
+}
 
 func (c *Encrypter) Encrypt(plainText string) string {
 	cipherText := ""
@@ -53,10 +59,4 @@ func (c *Encrypter) Decrypt(cipherText string) string {
 		plainText += string(char)
 	}
 	return plainText
-}
-
-func EncrypterInit(pwd int) *Encrypter {
-	return &Encrypter{
-		key: pwd,
-	}
 }
