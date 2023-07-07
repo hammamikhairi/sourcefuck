@@ -1,6 +1,6 @@
 # SourceFuck - The Ultimate Code Obfuscation Tool
 
-SourceFuck is a command-line tool that provides powerful code obfuscation capabilities, allowing you to make your Golang code completely unintelligible while maintaining its functionality. It offers a seamless solution for obfuscating your code, ensuring that it becomes extremely challenging for others to understand.
+SourceFuck is a command-line tool that provides powerful code obfuscation capabilities, allowing you to make your code completely unintelligible while maintaining its functionality. It offers a seamless solution for obfuscating your code, ensuring that it becomes extremely challenging for others to understand.
 
 ![idk](./banner.png)
 
