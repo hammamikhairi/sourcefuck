@@ -1,0 +1,27 @@
+name: Feature Request
+description: Suggest a feature or an enhancement for sourcefuck!
+labels: enhancement
+title: "[Feature]: "
+body:
+  - type: textarea
+    attributes:
+      label: Summary
+      description: >
+        A short summary of what your feature request is.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Does your feature solve a problem?
+      description: >
+        if yes, what becomes easier or possible when this feature is implemented?
+  - type: textarea
+    attributes:
+      label: Suggested Solution
+      description: >
+        What is your ideal solution to the problem?
+        What would you like this feature to do?
+  - type: textarea
+    attributes:
+      label: Additional Context
+      description: If there is anything else to say, please do so here.
