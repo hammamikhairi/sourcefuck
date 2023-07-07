@@ -6,7 +6,7 @@ SourceFuck is a command-line tool that provides powerful code obfuscation capabi
 
 ## Features
 
-- Code obfuscation: SourceFuck encrypts your Golang code, making it unreadable to others.
+- Code obfuscation: SourceFuck encrypts your code, making it unreadable to others.
 - Preserves functionality: Despite the encryption, your code will still run perfectly fine.
 - Multiple directory support: Encrypt entire directories of code, increasing the level of confusion.
 - Easy usage: Simple and straightforward to use on your projects.
@@ -22,13 +22,13 @@ go install github.com/hammamikhairi/sourcefuck@latest
 
 ## Usage
 
-To obfuscate or decrypt your Golang code using SourceFuck, use the following command:
+To obfuscate or decrypt your code using SourceFuck, use the following command:
 
 ```bash
 sourcefuck --path [path/to/your/code] --ext [file_extension] --key [encryption_key] [--out [output_directory]] [--dec]
 ```
 
-* `--path` : Specifies the path to your Golang file or directory that you want to obfuscate or decrypt.
+* `--path` : Specifies the path to your file or directory that you want to obfuscate or decrypt.
 * `--ext` : (Optional for directories) Specifies the file extension of the targeted files within the directory (only `go` is supported now but will add more languages in future versions).
 * `--key` : Specifies the encryption/decryption key. The default key is 8 if not specified. The current encryption method used is the Caesar cipher. Future versions of SourceFuck will incorporate a more advanced encryption algorithm.
 * `--out` : (Optional) Specifies the output directory for the obfuscated or decrypted code. If not provided, the encrypted/decrypted code will be written to either [path/to/your/code]/Dec or [path/to/your/code]/Enc depending on the usage.
@@ -63,7 +63,7 @@ The obfuscated or decrypted code will be generated in the output directory speci
 
 ## Contributing
 
-I welcome contributions from the open-source community to enhance SourceFuck and extend its capabilities. If you're interested in contributing, please follow the guidelines in CONTRIBUTING.md.
+I welcome contributions from the open-source community to enhance SourceFuck and extend its capabilities.
 
 ## License
 
