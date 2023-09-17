@@ -1,11 +1,18 @@
 package utils
 
 import (
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/hex"
+	"fmt"
 	"log"
+	"net"
 	"os"
 	"path/filepath"
 	"strings"
 	"unicode"
+
+	"golang.org/x/crypto/hkdf"
 )
 
 // checks if the entire string is a single ASCII whitespace
@@ -148,6 +155,70 @@ func ProcessFlags(path, ext, OutDir string, dec bool) ([]string, string, string)
 		OutDirPath, _ = filepath.Abs(OutDir)
 	}
 
-	println("!=!", base)
 	return files, base, OutDirPath
+}
+
+func Get32BytesKey(key string, useOsSig bool) []byte {
+	var base []byte
+	if useOsSig {
+		base = getOsSignature()
+	} else {
+		if key != "" {
+			base, _ = hex.DecodeString(key)
+			Assert(len(base) == 32, "Key must be 32 bytes.")
+			return base
+		} else {
+			base = generateRandomKey()
+		}
+	}
+
+	hkdf := hkdf.New(sha256.New, base, nil, nil)
+	keyBytes := make([]byte, 32)
+	n, err := hkdf.Read(keyBytes)
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+		return nil
+	}
+
+	if useOsSig {
+		fmt.Printf("[INFO] Using OS Signature as KEY [%x].\n", base)
+	} else {
+		fmt.Printf("[INFO] Using Generated KEY [%x].\n", base)
+	}
+	return keyBytes[:n]
+}
+
+func getOsSignature() []byte {
+	hostname, err := os.Hostname()
+	if err != nil {
+		log.Fatalf("Error getting hostname : %s", err)
+		os.Exit(1)
+	}
+
+	interfaces, err := net.Interfaces()
+	if err != nil {
+		log.Fatalf("Error getting network interfaces : %s", err)
+		os.Exit(1)
+	}
+
+	var macAddr string
+	for _, iface := range interfaces {
+		if len(iface.HardwareAddr) > 0 {
+			macAddr = iface.HardwareAddr.String()
+			break
+		}
+	}
+
+	return []byte(hostname + macAddr)
+}
+
+func generateRandomKey() []byte {
+	key := make([]byte, 32)
+	_, err := rand.Read(key)
+	if err != nil {
+		log.Fatal("Error generating random AES Key")
+		os.Exit(1)
+	}
+	return key
 }

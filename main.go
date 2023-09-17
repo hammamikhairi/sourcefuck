@@ -19,7 +19,8 @@ var (
 	ext       string
 	dec, peek bool
 	OutDir    string
-	key       int
+	userKey   string
+	useOsSig  bool
 
 	files            []string
 	base, OutDirPath string
@@ -32,7 +33,8 @@ func init() {
 	flag.BoolVar(&dec, "dec", false, "Specify this flag to decrypt an encrypted code using the provided key.")
 	flag.BoolVar(&peek, "peek", false, "Specify this flag to only print the obfuscated/decrypted code to the console.")
 	flag.StringVar(&OutDir, "out", "", "Specify the output directory for the obfuscated/decrypted code.")
-	flag.IntVar(&key, "key", 8, "The encryption/decryption key. (Default is 8)")
+	flag.BoolVar(&useOsSig, "osSig", false, "Use the OS signature as Enc/Dec Key")
+	flag.StringVar(&userKey, "key", "", "The encryption/decryption key. (A random key will be generated if unspecified)")
 	flag.Parse()
 
 	files, base, OutDirPath = ProcessFlags(path, ext, OutDir, dec)
@@ -64,6 +66,7 @@ func main() {
 		l.SetContent(string(b))
 		tokens := l.GetTokens()
 
+		key := Get32BytesKey(userKey, useOsSig)
 		pr := ParserInit(tokens, key)
 		pr.Parse(l, dec)
 		ParsedCode := l.FormatCode(tokens, &pr.Swap)
@@ -74,6 +77,7 @@ func main() {
 			continue
 		}
 
+		fmt.Printf("[INFO] Writing Code To %s", filepath.Join(OutDirPath, file))
 		WriteStringToFile(filepath.Join(OutDirPath, file), ParsedCode)
 	}
 }

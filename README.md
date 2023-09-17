@@ -30,31 +30,38 @@ sourcefuck --path [path/to/your/code] --ext [file_extension] --key [encryption_k
 
 * `--path` : Specifies the path to your file or directory that you want to obfuscate or decrypt.
 * `--ext` : (Optional for directories) Specifies the file extension of the targeted files within the directory (only `go` is supported now but will add more languages in future versions).
-* `--key` : Specifies the encryption/decryption key. The default key is 8 if not specified. The current encryption method used is the Caesar cipher. Future versions of SourceFuck will incorporate a more advanced encryption algorithm.
+* `--key` : Specifies the encryption/decryption key. SourceFuck currently uses AES for encryption, there for the key must be 32 bytes long. (if not specified, a random one will be generated and printed to the screen).
+* `--osSig` : (Optional) Use the OS signature as Enc/Dec Key.
 * `--out` : (Optional) Specifies the output directory for the obfuscated or decrypted code. If not provided, the encrypted/decrypted code will be written to either [path/to/your/code]/Dec or [path/to/your/code]/Enc depending on the usage.
 * `--dec` : (Optional) Indicates that the operation is decryption instead of obfuscation. If specified, the tool will decrypt the encrypted code.
 
 ### Examples:
 
-* Obfuscating a single file:
+* Obfuscating a single file using a Key:
 
 ```bash
-sourcefuck --path /path/to/your/code/main.go --key 9
+sourcefuck --path /path/to/your/code/main.go --key "52b5dd03ef4337b3fca6570ea87e63f950a89c7c90fcc6835bd2ff751a8def64"
+```
+
+* Obfuscating a single file using the OS Signature as Key:
+
+```bash
+sourcefuck --path /path/to/your/code/main.go --osSig
 ```
 
 * Obfuscating a directory of files with the ".go" extension:
 ```bash
-sourcefuck --path /path/to/your/code/ --ext go --key 9
+sourcefuck --path /path/to/your/code/ --ext go --osSig
 ```
 
 * Decrypting a directory of files with the ".go" extension:
 ```bash
-sourcefuck --path /path/to/your/code/ --ext go --key 9 --dec
+sourcefuck --path /path/to/your/code/ --ext go --osSig --dec
 ```
 
 * Obfuscating a directory and specifying the output directory:
 ```bash
-sourcefuck --path /path/to/your/code/ --ext go --key 9 --out /path/to/out/
+sourcefuck --path /path/to/your/code/ --ext go --osSig --out /path/to/out/
 ```
 
 Note: When decrypting, the encrypted files should be present in the specified path or directory.

@@ -1,62 +1,89 @@
 package encrypter
 
 import (
-	// "bytes"
-	// "fmt"
-	// "unicode"
-	// "crypto/aes"
-	// "crypto/cipher"
-	// "unicode"
-	. "github.com/hammamikhairi/sourcefuck/cmd/sourcefuck/Utils"
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
+	"encoding/base32"
+	"fmt"
+	"io"
+	"strings"
 )
 
-// TODO : for now i'm testing with caesar cipher, will change later
-
-// The count of unique letters in the English alphabet
-const ALPHA_LEN byte = 26
-
 type Encrypter struct {
-	key int
+	key []byte
 }
 
-func EncrypterInit(pwd int) *Encrypter {
+func EncrypterInit(key []byte) *Encrypter {
 	return &Encrypter{
-		key: pwd,
+		key,
 	}
 }
 
-func (c *Encrypter) Encrypt(plainText string) string {
-	cipherText := ""
-	for i := 0; i < len(plainText); i++ {
-		char := plainText[i]
+var (
+	buffer strings.Builder
+)
 
-		// Apply Caesar cipher, and maintain case of letters
-		if IsAlpha(char) {
-			A := byte('A')
-			if IsLower(char) {
-				A = 'a'
-			}
-			char = (char-A+byte(c.key))%ALPHA_LEN + A
-		}
-		cipherText += string(char)
-	}
-	return cipherText
+func customBase32Encode(data []byte) string {
+	encoder := base32.NewEncoder(base32.StdEncoding.WithPadding('_'), &buffer)
+	encoder.Write(data)
+	encoder.Close()
+
+	defer buffer.Reset()
+	return buffer.String()
 }
 
-func (c *Encrypter) Decrypt(cipherText string) string {
-	plainText := ""
-	for i := 0; i < len(cipherText); i++ {
-		char := cipherText[i]
+func customBase32Decode(encoded string) ([]byte, error) {
+	reader := strings.NewReader(encoded)
+	decoder := base32.NewDecoder(base32.StdEncoding.WithPadding('_'), reader)
 
-		// Apply Caesar cipher, and maintain case of letters
-		if IsAlpha(char) {
-			A := byte('A')
-			if IsLower(char) {
-				A = 'a'
-			}
-			char = (char-A+ALPHA_LEN-byte(c.key))%ALPHA_LEN + A
-		}
-		plainText += string(char)
+	_, err := io.Copy(&buffer, decoder)
+	if err != nil {
+		println(encoded)
+		fmt.Println("Decoding error:", err)
+		return nil, err
 	}
-	return plainText
+	defer buffer.Reset()
+	return []byte(buffer.String()), nil
+}
+
+func (c *Encrypter) Encrypt(text string) string {
+	block, err := aes.NewCipher(c.key)
+	if err != nil {
+		return ""
+	}
+
+	plaintext := []byte(text)
+	ciphertext := make([]byte, aes.BlockSize+len(plaintext))
+
+	iv := ciphertext[:aes.BlockSize]
+	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
+		return ""
+	}
+
+	mode := cipher.NewCFBEncrypter(block, iv)
+	mode.XORKeyStream(ciphertext[aes.BlockSize:], plaintext)
+
+	return customBase32Encode(ciphertext)
+}
+
+func (c *Encrypter) Decrypt(ciphertext string) string {
+	ciphertextBytes, err := customBase32Decode(ciphertext)
+	if err != nil {
+		return ""
+	}
+
+	iv := ciphertextBytes[:aes.BlockSize]
+	ciphertextBytes = ciphertextBytes[aes.BlockSize:]
+
+	block, err := aes.NewCipher(c.key)
+	if err != nil {
+		return ""
+	}
+
+	stream := cipher.NewCFBDecrypter(block, iv)
+	plaintext := make([]byte, len(ciphertextBytes))
+	stream.XORKeyStream(plaintext, ciphertextBytes)
+
+	return string(plaintext)
 }

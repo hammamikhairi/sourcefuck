@@ -161,7 +161,7 @@ func (l *Lexer) NextToken() *Token {
 				end = ')'
 			}
 
-			includedNewLines := 0
+			includedNewLines := -1
 			for l.Cursor < l.Content_len && l.getCharAt(l.Cursor) != end {
 				st++
 				l.ChopChar(1)
