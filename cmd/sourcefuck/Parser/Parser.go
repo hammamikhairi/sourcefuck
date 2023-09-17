@@ -12,7 +12,7 @@ type Parser struct {
 	Enc    *Encrypter
 }
 
-func ParserInit(tokens *[]*Token, key int) *Parser {
+func ParserInit(tokens *[]*Token, key []byte) *Parser {
 	return &Parser{
 		tokens,
 		make(map[string]string),
@@ -33,9 +33,9 @@ func (pr *Parser) Parse(l *Lexer, decrypt bool) {
 
 		if _, ok := pr.Swap[token_content]; token.Kind == TOKEN_IMPORTED && !ok {
 			if decrypt {
-				enc = pr.Enc.Decrypt(token_content)
+				enc = pr.Enc.Decrypt(token_content[1:])
 			} else {
-				enc = pr.Enc.Encrypt(token_content)
+				enc = string(token_content[0]) + pr.Enc.Encrypt(token_content)
 			}
 			for i+1 < tokens_len && l.GetTokenContent(tokens[i+1]) == "." {
 				i += 2
@@ -45,9 +45,9 @@ func (pr *Parser) Parse(l *Lexer, decrypt bool) {
 
 		if token.Kind == TOKEN_SYMBOL {
 			if decrypt {
-				enc = pr.Enc.Decrypt(token_content)
+				enc = pr.Enc.Decrypt(token_content[1:])
 			} else {
-				enc = pr.Enc.Encrypt(token_content)
+				enc = string(token_content[0]) + pr.Enc.Encrypt(token_content)
 			}
 			pr.Swap[token_content] = enc
 		}
